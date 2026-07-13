@@ -89,7 +89,3 @@ See [CITATION.cff](CITATION.cff). Formal citation will be updated when a technic
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-## Maintainer
-
-Abhinaysai Kamineni ([askmy-stack](https://github.com/askmy-stack))
