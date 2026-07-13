@@ -1,20 +1,20 @@
 <p align="center">
-  <img src="docs/assets/hero-banner.jpg" alt="Reliable Agent Systems — Detect, Diagnose, Recover" width="920" />
+  <img src="docs/assets/hero-banner.jpg" alt="Parallax — Reliable Agent Systems: Detect, Diagnose, Recover" width="920" />
 </p>
 
-<h1 align="center">Reliable Agent Systems</h1>
+<h1 align="center">Parallax</h1>
 
 <p align="center">
-  <strong>Detect when an agent is becoming unreliable — before the task fails.</strong>
+  <strong>When expectation and observation diverge, reliability is already failing.</strong>
 </p>
 
 <p align="center">
   Runtime reliability, diagnosis, and recovery for autonomous AI agents.<br/>
-  <em>AgentFailBench</em> · <em>Semantic Runtime Monitor</em> · <em>RecoverAI</em>
+  Research stack: <em>AgentFailBench</em> · <em>Semantic Runtime Monitor</em> · <em>RecoverAI</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/askmy-stack/reliable-agent-systems/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/askmy-stack/reliable-agent-systems/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/askmy-stack/parallax/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/askmy-stack/parallax/actions/workflows/ci.yml/badge.svg" /></a>
   <a href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-0d9488?logo=python&logoColor=white" /></a>
   <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-1f2933" /></a>
   <a href="docs/research-proposal.md"><img alt="Research" src="https://img.shields.io/badge/status-research%20scaffold-f59e0b" /></a>
@@ -23,27 +23,25 @@
 
 ---
 
-## Why this exists
+## Why Parallax?
 
-Most agent stacks measure the wrong thing.
+In optics, **parallax** is the apparent shift of an object when viewed from two positions.
 
-Final task success. Token spend. HTTP status codes. Model confidence.
+In agent systems, the same failure mode appears as a gap between:
 
-Those signals miss the failures that matter in long-horizon tool use:
+| Viewpoint | Signal |
+| --- | --- |
+| **Expectation** | What the agent believed a tool, memory, or plan step meant |
+| **Observation** | What the environment actually returned |
 
-- the API returns **200** but a field’s **meaning** changed
-- memory is consistent — and **stale**
-- retrieval looks relevant — and **outdated**
-- the planner revises forever and never progresses
-
-By the time the task fails, the useful diagnostic window is gone.
+If those viewpoints drift while HTTP still returns `200`, classic monitors stay quiet — and the task fails later, with the diagnostic window already closed.
 
 <p align="center">
   <img src="docs/assets/semantic-drift.gif" alt="Animated expected vs observed path divergence (semantic drift)" width="720" />
 </p>
 
 <p align="center">
-  <em>Expectation and observation can diverge without throwing an exception.</em>
+  <em>Parallax measures that gap early — then diagnoses and recovers.</em>
 </p>
 
 ### Central question
@@ -58,9 +56,9 @@ By the time the task fails, the useful diagnostic window is gone.
   <img src="docs/assets/semantic-mismatch.jpg" alt="Expectation vs observation: tool semantic drift with HTTP 200" width="920" />
 </p>
 
-**Tool semantic drift** is the first vertical slice: the schema stays valid, the transport succeeds, and the agent silently acts on the wrong world model.
+**Tool semantic drift** is the first vertical slice: schema stays valid, transport succeeds, meaning changes. The agent acts on the wrong world model — and nothing throws.
 
-AgentFailBench injects that class of failure with ground-truth labels so detectors and recovery policies can be evaluated — not just demoed.
+AgentFailBench injects that class of failure with ground-truth labels so detectors and recovery policies can be evaluated, not just demoed.
 
 ---
 
@@ -129,8 +127,8 @@ flowchart TB
 Requires **Python 3.12+**.
 
 ```bash
-git clone https://github.com/askmy-stack/reliable-agent-systems.git
-cd reliable-agent-systems
+git clone https://github.com/askmy-stack/parallax.git
+cd parallax
 
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
@@ -158,7 +156,7 @@ cat agentfailbench/failures/tool_drift/tool-semantic-drift-001.yaml
 ## Repository map
 
 ```text
-reliable-agent-systems/
+parallax/
 ├── agentfailbench/     # benchmark cases + injectors
 ├── runtime/            # semantic monitor + detectors
 ├── recovery/           # RecoverAI policies
@@ -215,11 +213,11 @@ Security reports: [`SECURITY.md`](SECURITY.md).
 ## Citation
 
 ```bibtex
-@software{kamineni2026reliable,
-  author = {Kamineni, Abhinaysai},
-  title  = {Reliable Agent Systems: Runtime Reliability, Diagnosis, and Recovery for Autonomous AI Agents},
-  year   = {2026},
-  url    = {https://github.com/askmy-stack/reliable-agent-systems},
+@software{parallax2026,
+  author  = {Kamineni, Abhinaysai},
+  title   = {Parallax: Reliable Agent Systems},
+  year    = {2026},
+  url     = {https://github.com/askmy-stack/parallax},
   version = {0.1.0}
 }
 ```

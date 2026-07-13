@@ -1,6 +1,6 @@
 # Visual assets
 
-README and docs media for Reliable Agent Systems.
+README and docs media for **Parallax** (Reliable Agent Systems).
 
 | File | Purpose |
 | --- | --- |

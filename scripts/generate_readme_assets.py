@@ -134,7 +134,7 @@ def draw_frame(active: int, pulse: float) -> Image.Image:
     gap_text = "aligned" if abs(0.82 - obs) < 0.05 else "divergence detected"
     draw.text((510, 436), f"Expected–observed gap: {gap_text}", fill=MUTED, font=detail_font)
 
-    draw.text((40, 488), "Reliable Agent Systems  ·  AgentFailBench × Semantic Monitor × RecoverAI", fill=MUTED, font=detail_font)
+    draw.text((40, 488), "Parallax  ·  AgentFailBench × Semantic Monitor × RecoverAI", fill=MUTED, font=detail_font)
     return img
 
 

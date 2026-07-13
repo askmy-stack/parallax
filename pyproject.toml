@@ -35,9 +35,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/askmy-stack/reliable-agent-systems"
-Repository = "https://github.com/askmy-stack/reliable-agent-systems"
-Issues = "https://github.com/askmy-stack/reliable-agent-systems/issues"
+Homepage = "https://github.com/askmy-stack/parallax"
+Repository = "https://github.com/askmy-stack/parallax"
+Issues = "https://github.com/askmy-stack/parallax/issues"
 
 [project.optional-dependencies]
 dev = [
