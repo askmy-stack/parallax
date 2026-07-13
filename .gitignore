@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# Type checkers / linters
+.mypy_cache/
+.ruff_cache/
+.pytype/
+
+# Editors / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Experiment artifacts
+experiments/results/**
+!experiments/results/.gitkeep
+*.parquet
+*.duckdb
+mlruns/
+wandb/
+
+# Datasets (keep cards; ignore large raw dumps)
+datasets/raw/**
+!datasets/raw/.gitkeep
+datasets/processed/**
+!datasets/processed/.gitkeep
+
+# Docker / local
+.netlify/
+.terraform/
+
+# Jupyter
+.ipynb_checkpoints/

@@ -1,0 +1,25 @@
+case_id: tool-semantic-drift-001
+
+task:
+  objective: update_customer_subscription
+  environment: customer_service_api
+  expected_steps: 8
+
+failure:
+  category: tool_semantic_drift
+  trigger_step: 4
+  visible_exception: false
+  reversible: true
+
+ground_truth:
+  root_cause: plan_identifier_semantics_changed
+  first_detectable_step: 5
+  final_failure_step: 8
+  expected_recovery:
+    - refresh_tool_contract
+    - validate_identifier_mapping
+    - replan_pending_action
+
+risk:
+  severity: medium
+  impact: incorrect_account_update

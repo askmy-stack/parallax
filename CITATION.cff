@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "Reliable Agent Systems: Runtime Reliability, Diagnosis, and Recovery for Autonomous AI Agents"
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+authors:
+  - family-names: Kamineni
+    given-names: Abhinaysai
+repository-code: "https://github.com/askmy-stack/reliable-agent-systems"
+url: "https://github.com/askmy-stack/reliable-agent-systems"
+abstract: >-
+  Open-source research project for evaluating, detecting, diagnosing, and
+  recovering from runtime failures in autonomous AI agents. Introduces
+  AgentFailBench, a semantic runtime monitor, and RecoverAI recovery evaluation.
+keywords:
+  - AI agents
+  - reliability
+  - agent evaluation
+  - observability
+  - recovery
+  - benchmarks
+license: MIT
+version: 0.1.0
+date-released: "2026-07-13"

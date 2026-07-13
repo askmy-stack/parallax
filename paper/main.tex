@@ -1,0 +1,37 @@
+% Technical report scaffold for Reliable Agent Systems.
+% Expand as experiments produce results.
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+
+\title{Reliable Agent Systems:\\
+Runtime Reliability, Diagnosis, and Recovery for Autonomous AI Agents}
+\author{Abhinaysai Kamineni}
+\date{2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study how autonomous AI agents can detect reliability degradation before
+visible task failure, attribute root causes, estimate continuation risk, and
+select recovery strategies. This draft accompanies the open-source
+\texttt{reliable-agent-systems} repository.
+\end{abstract}
+
+\section{Introduction}
+Capable agents must recognize when assumptions fail and choose when to retry,
+adapt, ask for help, or stop. See the project roadmap for the full research plan.
+
+\section{Contributions}
+\begin{enumerate}
+  \item Runtime failure taxonomy
+  \item AgentFailBench
+  \item Semantic runtime monitoring
+  \item RecoverAI failure-aware recovery evaluation
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
