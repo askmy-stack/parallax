@@ -1,31 +1,74 @@
-# Reliable Agent Systems
+<p align="center">
+  <img src="docs/assets/hero-banner.jpg" alt="Reliable Agent Systems — Detect, Diagnose, Recover" width="920" />
+</p>
 
-> **Reliable Agent Systems is an open-source research project for evaluating, detecting, diagnosing, and recovering from runtime failures in autonomous AI agents.**
->
-> The project introduces AgentFailBench, a benchmark for controlled reliability degradation; a semantic trace model that captures goals, actions, expectations, observations, and state changes; and RecoverAI, a framework for evaluating failure-specific recovery strategies.
->
-> The initial focus is tool-using digital agents, followed by multimodal and simulated Physical AI environments.
+<h1 align="center">Reliable Agent Systems</h1>
 
-## Research identity
+<p align="center">
+  <strong>Detect when an agent is becoming unreliable — before the task fails.</strong>
+</p>
 
-**Reliable and adaptive AI systems across digital and physical environments.**
+<p align="center">
+  Runtime reliability, diagnosis, and recovery for autonomous AI agents.<br/>
+  <em>AgentFailBench</em> · <em>Semantic Runtime Monitor</em> · <em>RecoverAI</em>
+</p>
 
-This project studies how autonomous AI agents can continuously evaluate their own reliability, recognize when their assumptions are no longer valid, identify the likely source of failure, and choose a safe recovery strategy.
+<p align="center">
+  <a href="https://github.com/askmy-stack/reliable-agent-systems/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/askmy-stack/reliable-agent-systems/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-0d9488?logo=python&logoColor=white" /></a>
+  <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-1f2933" /></a>
+  <a href="docs/research-proposal.md"><img alt="Research" src="https://img.shields.io/badge/status-research%20scaffold-f59e0b" /></a>
+  <a href="docs/roadmap.md"><img alt="Milestone 0" src="https://img.shields.io/badge/milestone-0%20foundation-14b8a6" /></a>
+</p>
 
-### Central problem
+---
 
-> How can an autonomous AI system detect that it is becoming unreliable before visible task failure, distinguish the root cause of the degradation, estimate the risk of continuing, and select a safe and effective recovery strategy?
+## Why this exists
 
-## Core contributions
+Most agent stacks measure the wrong thing.
 
-| Contribution | Module | Description |
-|---|---|---|
-| Runtime failure taxonomy | `docs/failure-taxonomy.md` | Structured failure classes during valid task execution |
-| AgentFailBench | `agentfailbench/` | Controlled failure injection + ground-truth labels |
-| Semantic Runtime Monitor | `runtime/` | Goals, beliefs, actions, expectations, observations |
-| RecoverAI | `recovery/` | Failure-aware recovery policy evaluation |
+Final task success. Token spend. HTTP status codes. Model confidence.
+
+Those signals miss the failures that matter in long-horizon tool use:
+
+- the API returns **200** but a field’s **meaning** changed
+- memory is consistent — and **stale**
+- retrieval looks relevant — and **outdated**
+- the planner revises forever and never progresses
+
+By the time the task fails, the useful diagnostic window is gone.
+
+<p align="center">
+  <img src="docs/assets/semantic-drift.gif" alt="Animated expected vs observed path divergence (semantic drift)" width="720" />
+</p>
+
+<p align="center">
+  <em>Expectation and observation can diverge without throwing an exception.</em>
+</p>
+
+### Central question
+
+> How can an autonomous system detect that it is becoming unreliable **before** visible task failure, distinguish the root cause, estimate the risk of continuing, and choose a safe recovery strategy?
+
+---
+
+## The invisible failure
+
+<p align="center">
+  <img src="docs/assets/semantic-mismatch.jpg" alt="Expectation vs observation: tool semantic drift with HTTP 200" width="920" />
+</p>
+
+**Tool semantic drift** is the first vertical slice: the schema stays valid, the transport succeeds, and the agent silently acts on the wrong world model.
+
+AgentFailBench injects that class of failure with ground-truth labels so detectors and recovery policies can be evaluated — not just demoed.
+
+---
 
 ## Reliability lifecycle
+
+<p align="center">
+  <img src="docs/assets/reliability-lifecycle.gif" alt="Animated reliability lifecycle from failure injection through recovery evaluation" width="920" />
+</p>
 
 ```text
 Controlled failure
@@ -43,49 +86,155 @@ Recovery selection
 Post-recovery evaluation
 ```
 
-## Repository layout
+---
 
-```text
-agentfailbench/   # Benchmark tasks, environments, failure injectors, labels
-runtime/          # Tracing, schemas, features, detectors, diagnosis
-recovery/         # Policies, actions, constraints, sandbox, evaluation
-baselines/        # Rule, statistical, classical ML, sequence, LLM judges
-experiments/      # Configs, scripts, notebooks, results
-docs/             # Research specs and ADRs
-examples/         # Minimal agent scaffolds
-tests/            # Unit, integration, and benchmark tests
-paper/            # Technical report / paper drafts
+## Reliability stack
+
+<p align="center">
+  <img src="docs/assets/architecture-overview.jpg" alt="Reliability stack: execution, semantic traces, intelligence, recovery, evaluation" width="860" />
+</p>
+
+| Layer | Package | Role |
+| --- | --- | --- |
+| Benchmark | `agentfailbench/` | Tasks, environments, injectors, ground-truth labels |
+| Monitor | `runtime/` | Traces, features, detectors, diagnosis, calibration |
+| Recovery | `recovery/` | Policies, actions, constraints, sandbox evaluation |
+| Baselines | `baselines/` | Rules, classical ML, sequence models, LLM judges |
+
+```mermaid
+flowchart TB
+  A[Agent task] --> B[Execution layer]
+  B --> C[Semantic Trace Collector]
+  C --> D[Reliability Intelligence]
+  D --> E[Recovery Governor]
+  E --> F[Evaluation Layer]
+  F -.->|metrics| D
 ```
+
+---
+
+## Core contributions
+
+| # | Contribution | What you get |
+| --- | --- | --- |
+| 1 | **Failure taxonomy** | Model · planning · memory · retrieval · tool · data · environment · communication · execution · recovery |
+| 2 | **AgentFailBench** | Controlled degradation with first-detectable / final-failure steps |
+| 3 | **Semantic Runtime Monitor** | Goals, beliefs, actions, expectations, observations, state changes |
+| 4 | **RecoverAI** | Failure-conditioned recovery vs retry-only / restart / generic reflection |
+
+---
 
 ## Quick start
 
 Requires **Python 3.12+**.
 
 ```bash
+git clone https://github.com/askmy-stack/reliable-agent-systems.git
+cd reliable-agent-systems
+
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
 make install
 make test
+ras                  # prints package version
 ```
 
-Optional local OpenTelemetry UI:
+Optional local telemetry UI:
 
 ```bash
 docker compose up -d jaeger
+# UI → http://localhost:16686
 ```
 
-## Status
+Inspect the first benchmark case:
 
-**Milestone 0 — Repository foundation** (in progress)
+```bash
+cat agentfailbench/failures/tool_drift/tool-semantic-drift-001.yaml
+```
 
-See [docs/roadmap.md](docs/roadmap.md) for the full research specification and [docs/research-proposal.md](docs/research-proposal.md) for the condensed proposal.
+---
 
-Immediate vertical slice: **tool semantic drift** in a customer-subscription update task (see sprint notes in the roadmap §30).
+## Repository map
+
+```text
+reliable-agent-systems/
+├── agentfailbench/     # benchmark cases + injectors
+├── runtime/            # semantic monitor + detectors
+├── recovery/           # RecoverAI policies
+├── baselines/          # comparison methods
+├── experiments/        # configs · notebooks · results
+├── docs/               # specs · ADRs · roadmap
+│   └── assets/         # README visuals
+├── examples/           # minimal agent scaffolds
+├── tests/              # unit · integration · benchmark
+└── paper/              # technical report scaffold
+```
+
+---
+
+## Research status
+
+| Milestone | Focus | Status |
+| --- | --- | --- |
+| **0** | Repository foundation | ✅ scaffolded |
+| **1** | Minimal agent environments | next |
+| **2** | Failure injection suite | planned |
+| **3** | Semantic tracing | planned |
+| **4–6** | Detection · diagnosis · recovery | planned |
+| **7** | Research release v0.1 | planned |
+
+Full specification: [`docs/roadmap.md`](docs/roadmap.md)  
+Condensed proposal: [`docs/research-proposal.md`](docs/research-proposal.md)  
+Taxonomy: [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)
+
+**Near-term experiment:** compare exception monitoring, confidence thresholds, raw telemetry anomaly detection, and semantic expected–observed monitoring on tool semantic drift.
+
+---
+
+## Design principles
+
+1. **Benchmark before framework** — AgentFailBench stays scaffold-agnostic.
+2. **Semantics over status codes** — expectations and observations are first-class.
+3. **Label everything** — detection lead time and root cause need ground truth.
+4. **Recovery is a policy** — not an infinite retry loop.
+5. **No false safety claims** — empirical reliability evaluation, not formal guarantees.
+
+---
+
+## Contributing
+
+Research contributions welcome: new failure cases, detectors, recovery policies, and ablation studies.
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+
+Security reports: [`SECURITY.md`](SECURITY.md).
+
+---
 
 ## Citation
 
-See [CITATION.cff](CITATION.cff). Formal citation will be updated when a technical report or paper is released.
+```bibtex
+@software{kamineni2026reliable,
+  author = {Kamineni, Abhinaysai},
+  title  = {Reliable Agent Systems: Runtime Reliability, Diagnosis, and Recovery for Autonomous AI Agents},
+  year   = {2026},
+  url    = {https://github.com/askmy-stack/reliable-agent-systems},
+  version = {0.1.0}
+}
+```
+
+Also see [`CITATION.cff`](CITATION.cff).
+
+---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [`LICENSE`](LICENSE).
+
+<p align="center">
+  <sub>
+    Capable agents must not only know how to act.<br/>
+    They must recognize when their assumptions are failing — and choose when to retry, adapt, ask for help, or stop.
+  </sub>
+</p>
