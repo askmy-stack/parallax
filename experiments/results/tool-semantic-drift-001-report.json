@@ -1,0 +1,58 @@
+{
+  "case_id": "tool-semantic-drift-001",
+  "task_success_before_recovery": false,
+  "diagnosis": "plan_identifier_semantics_changed",
+  "recovery_actions": [
+    "refresh_tool_contract",
+    "validate_identifier_mapping",
+    "replan_pending_action"
+  ],
+  "recovery_success": true,
+  "detectors": [
+    {
+      "detector": "exception",
+      "detected": false,
+      "detection_step": null,
+      "reason": "no_exceptions",
+      "meets_first_detectable": false
+    },
+    {
+      "detector": "confidence",
+      "detected": false,
+      "detection_step": null,
+      "reason": "confidence_unavailable_in_scripted_scaffold",
+      "meets_first_detectable": false
+    },
+    {
+      "detector": "raw_telemetry",
+      "detected": false,
+      "detection_step": null,
+      "reason": "telemetry_nominal",
+      "meets_first_detectable": false
+    },
+    {
+      "detector": "semantic_mismatch",
+      "detected": true,
+      "detection_step": 4,
+      "reason": "plan_id_meaning_or_contract_divergence",
+      "meets_first_detectable": true
+    }
+  ],
+  "false_alarms_on_clean_run": {
+    "exception": false,
+    "confidence": false,
+    "raw_telemetry": false,
+    "semantic_mismatch": false
+  },
+  "ground_truth": {
+    "root_cause": "plan_identifier_semantics_changed",
+    "first_detectable_step": 5,
+    "final_failure_step": 8,
+    "expected_recovery": [
+      "refresh_tool_contract",
+      "validate_identifier_mapping",
+      "replan_pending_action"
+    ]
+  },
+  "clean_success": true
+}

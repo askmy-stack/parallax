@@ -4,10 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
-import yaml
-
+from agentfailbench.models import BenchmarkCaseModel
 from runtime.schemas.taxonomy import FailureCategory
 
 
@@ -16,15 +14,15 @@ class BenchmarkCase:
     """Parsed AgentFailBench case definition."""
 
     case_id: str
-    raw: dict[str, Any]
+    model: BenchmarkCaseModel
 
     @property
-    def failure_category(self) -> str | None:
-        failure = self.raw.get("failure", {})
-        if isinstance(failure, dict):
-            value = failure.get("category")
-            return str(value) if value is not None else None
-        return None
+    def failure_category(self) -> str:
+        return self.model.failure_category
+
+    @property
+    def raw(self) -> dict[str, object]:
+        return self.model.to_raw()
 
 
 @dataclass
@@ -46,14 +44,27 @@ class CaseRegistry:
 
     @classmethod
     def from_yaml_file(cls, path: Path) -> CaseRegistry:
+        import yaml
+
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
             raise ValueError(f"Case file must be a mapping: {path}")
-        case_id = data.get("case_id")
-        if not isinstance(case_id, str) or not case_id:
-            raise ValueError(f"Missing case_id in {path}")
+        model = BenchmarkCaseModel.model_validate(data)
         registry = cls()
-        registry.register(BenchmarkCase(case_id=case_id, raw=data))
+        registry.register(BenchmarkCase(case_id=model.case_id, model=model))
+        return registry
+
+    @classmethod
+    def from_directory(cls, directory: Path) -> CaseRegistry:
+        """Load all ``*.yaml`` / ``*.yml`` case files under ``directory`` (recursive)."""
+        registry = cls()
+        paths = sorted(directory.rglob("*.yaml")) + sorted(directory.rglob("*.yml"))
+        for path in paths:
+            if path.name.startswith("."):
+                continue
+            partial = cls.from_yaml_file(path)
+            for case in partial.cases.values():
+                registry.register(case)
         return registry
 
     def categories_present(self) -> set[FailureCategory]:
@@ -61,9 +72,6 @@ class CaseRegistry:
         found: set[FailureCategory] = set()
         for case in self.cases.values():
             category = case.failure_category
-            if category is None:
-                continue
-            # Accept either top-level enum values or suite-style names.
             for member in FailureCategory:
                 if category == member.value or category.startswith(f"{member.value}_"):
                     found.add(member)

@@ -44,6 +44,8 @@ Thumbs.db
 # Experiment artifacts
 experiments/results/**
 !experiments/results/.gitkeep
+!experiments/results/*.md
+!experiments/results/*-report.json
 *.parquet
 *.duckdb
 mlruns/

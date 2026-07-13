@@ -1,39 +1,30 @@
-"""Recovery action suggestion helpers.
-
-Learning task: implement ``suggest_recovery_actions`` (see function docstring).
-"""
+"""Recovery action suggestion helpers."""
 
 from __future__ import annotations
 
-from runtime.schemas.taxonomy import FailureCategory
+from runtime.schemas.taxonomy import FailureCategory, ToolFailureType
 
 
 def suggest_recovery_actions(
     category: FailureCategory,
     subtype: str | None = None,
 ) -> list[str]:
-    """Return ordered recovery action names for a diagnosed failure.
-
-    This function shapes RecoverAI's first policy table. Prefer specific,
-    reversible actions before escalation or stop.
-
-    Args:
-        category: Top-level failure category from the taxonomy.
-        subtype: Optional finer label (e.g. ``semantic_drift``).
-
-    Returns:
-        Ordered list of recovery action identifiers such as
-        ``refresh_tool_contract``, ``retry``, ``replan``, ``rollback_memory``,
-        ``escalate``, or ``stop``.
-
-    Guidance:
-        - For TOOL + semantic_drift, the first sprint expects:
-          refresh_tool_contract → validate_identifier_mapping → replan_pending_action
-        - Avoid recommending irreversible actions when the case is marked reversible
-        - Prefer stop/escalate only when risk is high or recovery budget is exhausted
-    """
-    # --- YOUR IMPLEMENTATION (about 8–12 lines) ---
-    # Map FailureCategory (+ optional subtype) to an ordered recovery plan.
-    # Start with the tool semantic-drift vertical slice; other categories can
-    # return a conservative default like ["retry", "replan", "escalate"].
-    raise NotImplementedError("Implement suggest_recovery_actions — see docs/recovery-policy.md")
+    """Return ordered recovery action names for a diagnosed failure."""
+    normalized = (subtype or "").lower().replace("-", "_")
+    if category is FailureCategory.TOOL and normalized in {
+        ToolFailureType.SEMANTIC_DRIFT.value,
+        "tool_semantic_drift",
+        "semantic_tool_drift",
+    }:
+        return [
+            "refresh_tool_contract",
+            "validate_identifier_mapping",
+            "replan_pending_action",
+        ]
+    if category is FailureCategory.MEMORY:
+        return ["rollback_memory", "refresh_context", "replan", "escalate"]
+    if category is FailureCategory.RETRIEVAL:
+        return ["refresh_context", "replan", "escalate"]
+    if category is FailureCategory.PLANNING:
+        return ["replan", "restart", "escalate"]
+    return ["retry", "replan", "escalate"]

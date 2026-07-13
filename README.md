@@ -135,7 +135,14 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
 make install
 make test
-ras                  # prints package version
+ras --version
+```
+
+Run the first vertical-slice experiment (tool semantic drift):
+
+```bash
+ras experiment run --case tool-semantic-drift-001 --compare
+# → experiments/results/tool-semantic-drift-001.md
 ```
 
 Optional local telemetry UI:
@@ -175,18 +182,26 @@ parallax/
 
 | Milestone | Focus | Status |
 | --- | --- | --- |
-| **0** | Repository foundation | ✅ scaffolded |
-| **1** | Minimal agent environments | next |
-| **2** | Failure injection suite | planned |
-| **3** | Semantic tracing | planned |
-| **4–6** | Detection · diagnosis · recovery | planned |
+| **0** | Repository foundation | ✅ done |
+| **1** | Minimal agent environment (customer API slice) | ✅ vertical slice |
+| **2** | Failure injection (semantic drift) | ✅ vertical slice |
+| **3** | Semantic tracing | ✅ vertical slice |
+| **4–6** | Detection · diagnosis · recovery | ✅ first-slice baselines |
 | **7** | Research release v0.1 | planned |
+
+First experiment results: [`experiments/results/tool-semantic-drift-001.md`](experiments/results/tool-semantic-drift-001.md)
+
+| Detector | Detected drift? | Notes |
+| --- | --- | --- |
+| Exception | No | HTTP 200 / no thrown errors |
+| Confidence | No | Absent in scripted scaffold |
+| Raw telemetry | No | No latency/retry spikes |
+| **Semantic mismatch** | **Yes (step 4)** | Expected vs observed `plan_id_meaning` |
+| Recovery (`refresh_tool_contract`) | Success | Task recovers after remapping |
 
 Full specification: [`docs/roadmap.md`](docs/roadmap.md)  
 Condensed proposal: [`docs/research-proposal.md`](docs/research-proposal.md)  
 Taxonomy: [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)
-
-**Near-term experiment:** compare exception monitoring, confidence thresholds, raw telemetry anomaly detection, and semantic expected–observed monitoring on tool semantic drift.
 
 ---
 
