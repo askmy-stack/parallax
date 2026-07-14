@@ -8,7 +8,11 @@ from typing import Any
 
 from agentfailbench.agents.scripted import ScriptedApiAgent
 from agentfailbench.environments.customer_api.env import CustomerApiEnv
-from agentfailbench.failures.tool_drift.injector import SemanticDriftInjector
+from agentfailbench.failures.base import FailureInjectorRegistry
+from agentfailbench.failures.tool_drift.injector import (
+    SemanticDriftInjector,
+    SemanticDriftInjectorAdapter,
+)
 from agentfailbench.models import BenchmarkCaseModel
 from agentfailbench.registry import CaseRegistry
 from baselines.rules.detectors import BaseDetector, DetectionResult, all_detectors
@@ -46,21 +50,27 @@ def _run_traced(
     case: BenchmarkCaseModel,
     *,
     inject_failure: bool,
-) -> tuple[CustomerApiEnv, ScriptedApiAgent, TraceCollector, SemanticDriftInjector]:
+) -> tuple[CustomerApiEnv, ScriptedApiAgent, TraceCollector, SemanticDriftInjectorAdapter]:
     task = build_task(case)
     env = CustomerApiEnv(task=task)
     agent = ScriptedApiAgent(env=env)
-    injector = SemanticDriftInjector(trigger_step=case.failure.trigger_step)
+    injector = SemanticDriftInjectorAdapter(
+        SemanticDriftInjector(trigger_step=case.failure.trigger_step)
+    )
+    injectors = FailureInjectorRegistry()
+    injectors.register("tool_drift.semantic_drift", injector)
     collector = TraceCollector(task_id=case.case_id)
 
     for _ in range(case.task.expected_steps):
         upcoming_step = agent._step + 1
         if inject_failure:
-            injector.before_step(env, upcoming_step)
+            injectors.dispatch_before_step(env, upcoming_step)
         action = agent.next_action()
         if action is None:
             break
         obs = env.step(action)
+        if inject_failure:
+            injectors.dispatch_after_step(env, upcoming_step, obs)
         progress = min(1.0, action.step / case.task.expected_steps)
         collector.record(action, obs, agent.expected_attributes(), progress)
 
