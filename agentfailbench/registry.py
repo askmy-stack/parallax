@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from agentfailbench.models import BenchmarkCaseModel
+from runtime.schemas.root_cause import RootCauseLabel
 from runtime.schemas.taxonomy import FailureCategory
 
 
@@ -19,6 +20,11 @@ class BenchmarkCase:
     @property
     def failure_category(self) -> str:
         return self.model.failure_category
+
+    @property
+    def root_cause_label(self) -> RootCauseLabel:
+        """Versioned, categorized ground-truth root-cause label for this case."""
+        return self.model.ground_truth.root_cause_label
 
     @property
     def raw(self) -> dict[str, object]:
