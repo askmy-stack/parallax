@@ -6,6 +6,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from runtime.schemas.root_cause import RootCauseCode, RootCauseLabel, root_cause_label
+
 
 class TaskBlock(BaseModel):
     objective: str
@@ -21,10 +23,15 @@ class FailureBlock(BaseModel):
 
 
 class GroundTruthBlock(BaseModel):
-    root_cause: str
+    root_cause: RootCauseCode
     first_detectable_step: int
     final_failure_step: int
     expected_recovery: list[str] = Field(default_factory=list)
+
+    @property
+    def root_cause_label(self) -> RootCauseLabel:
+        """The versioned, categorized label for :attr:`root_cause`."""
+        return root_cause_label(self.root_cause)
 
 
 class RiskBlock(BaseModel):
