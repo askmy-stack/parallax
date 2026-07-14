@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from agentfailbench.environments.customer_api.env import CustomerApiEnv
+from runtime.schemas.episode import EnvObservation
 
 
 @dataclass
@@ -27,3 +28,30 @@ class SemanticDriftInjector:
 
     def reset(self) -> None:
         self._triggered = False
+
+
+@dataclass
+class SemanticDriftInjectorAdapter:
+    """Adapts :class:`SemanticDriftInjector` to the shared ``FailureInjector`` protocol.
+
+    ``SemanticDriftInjector`` predates the shared interface (``agentfailbench.failures.base``)
+    and only needs a trigger-based ``before_step``/``reset``. This adapter fills in the
+    ``after_step`` hook so the injector can be registered and dispatched alongside future
+    suites without changing its existing behavior.
+    """
+
+    injector: SemanticDriftInjector = field(default_factory=SemanticDriftInjector)
+
+    def before_step(self, env: CustomerApiEnv, step: int) -> None:
+        self.injector.before_step(env, step)
+
+    def after_step(self, env: CustomerApiEnv, step: int, observation: EnvObservation) -> None:
+        """No-op: semantic drift is a one-shot contract flip with no post-step reaction."""
+        del env, step, observation
+
+    def reset(self) -> None:
+        self.injector.reset()
+
+    @property
+    def triggered(self) -> bool:
+        return self.injector.triggered
