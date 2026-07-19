@@ -36,13 +36,21 @@
       "detection_step": 4,
       "reason": "plan_id_meaning_or_contract_divergence",
       "meets_first_detectable": true
+    },
+    {
+      "detector": "no_progress",
+      "detected": false,
+      "detection_step": null,
+      "reason": "progress_nominal",
+      "meets_first_detectable": false
     }
   ],
   "false_alarms_on_clean_run": {
     "exception": false,
     "confidence": false,
     "raw_telemetry": false,
-    "semantic_mismatch": false
+    "semantic_mismatch": false,
+    "no_progress": false
   },
   "ground_truth": {
     "root_cause": "plan_identifier_semantics_changed",

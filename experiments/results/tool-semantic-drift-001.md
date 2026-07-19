@@ -23,6 +23,7 @@
 | `confidence` | False | None | False | confidence_unavailable_in_scripted_scaffold |
 | `raw_telemetry` | False | None | False | telemetry_nominal |
 | `semantic_mismatch` | True | 4 | True | plan_id_meaning_or_contract_divergence |
+| `no_progress` | False | None | False | progress_nominal |
 
 ## Outcomes
 
@@ -31,4 +32,4 @@
 - Diagnosis: `plan_identifier_semantics_changed`
 - Recovery actions: `['refresh_tool_contract', 'validate_identifier_mapping', 'replan_pending_action']`
 - Recovery success: **True**
-- False alarms on clean run: `{'exception': False, 'confidence': False, 'raw_telemetry': False, 'semantic_mismatch': False}`
+- False alarms on clean run: `{'exception': False, 'confidence': False, 'raw_telemetry': False, 'semantic_mismatch': False, 'no_progress': False}`
