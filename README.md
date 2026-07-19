@@ -197,6 +197,7 @@ First experiment results: [`experiments/results/tool-semantic-drift-001.md`](exp
 | Confidence | No | Absent in scripted scaffold |
 | Raw telemetry | No | No latency/retry spikes |
 | **Semantic mismatch** | **Yes (step 4)** | Expected vs observed `plan_id_meaning` |
+| No progress | No | No repeated actions / flat goal progress in this case |
 | Recovery (`refresh_tool_contract`) | Success | Task recovers after remapping |
 
 Full specification: [`docs/roadmap.md`](docs/roadmap.md)  

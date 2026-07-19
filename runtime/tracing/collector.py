@@ -52,7 +52,11 @@ class TraceCollector:
                 success=observation.success,
                 attributes=obs_attrs,
             ),
-            attributes={"step": action.step, "arguments": action.arguments},
+            attributes={
+                "step": action.step,
+                "arguments": action.arguments,
+                "goal_progress": goal_progress,
+            },
         )
         self.events.append(event)
         self.goal_progress.append(goal_progress)

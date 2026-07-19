@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from runtime.features.mismatch import first_mismatch_step, semantic_mismatch
+from runtime.features.progress import flat_progress_step, repeated_action_step
 from runtime.schemas.trace import TraceEvent
 
 
@@ -112,10 +113,46 @@ class SemanticMismatchDetector(BaseDetector):
         )
 
 
+class NoProgressDetector(BaseDetector):
+    """Rule-based planning-loop baseline: repeated actions or flat goal progress.
+
+    Flags episodes where the agent either (a) issues the same action (name +
+    arguments) several steps in a row, or (b) makes no forward goal progress for
+    several consecutive steps. Both are cheap, model-independent proxies for
+    planning-loop / stagnation failures (see docs/roadmap.md, Baseline B).
+    """
+
+    name = "no_progress"
+
+    def __init__(self, min_repeats: int = 2, min_flat_steps: int = 3) -> None:
+        self.min_repeats = min_repeats
+        self.min_flat_steps = min_flat_steps
+
+    def detect(self, events: list[TraceEvent]) -> DetectionResult:
+        repeat_step = repeated_action_step(events, min_repeats=self.min_repeats)
+        if repeat_step is not None:
+            return DetectionResult(
+                detector_name=self.name,
+                detected=True,
+                detection_step=repeat_step,
+                reason="repeated_action",
+            )
+        flat_step = flat_progress_step(events, min_flat_steps=self.min_flat_steps)
+        if flat_step is not None:
+            return DetectionResult(
+                detector_name=self.name,
+                detected=True,
+                detection_step=flat_step,
+                reason="flat_goal_progress",
+            )
+        return DetectionResult(detector_name=self.name, detected=False, reason="progress_nominal")
+
+
 def all_detectors() -> list[BaseDetector]:
     return [
         ExceptionDetector(),
         ConfidenceDetector(),
         RawTelemetryDetector(),
         SemanticMismatchDetector(),
+        NoProgressDetector(),
     ]
